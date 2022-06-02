@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		093403AC284953B100123083 /* PanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093403AB284953B100123083 /* PanelView.swift */; };
 		094438062846672F00671E0D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094438052846672F00671E0D /* AppDelegate.swift */; };
 		094438082846672F00671E0D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094438072846672F00671E0D /* SceneDelegate.swift */; };
 		0944380A2846672F00671E0D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094438092846672F00671E0D /* ViewController.swift */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		092F31E82846A63500C05FFD /* iCimulator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = iCimulator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		093403AB284953B100123083 /* PanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelView.swift; sourceTree = "<group>"; };
 		094438022846672F00671E0D /* QR-scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "QR-scanner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		094438052846672F00671E0D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		094438072846672F00671E0D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -45,6 +47,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		093403AA2849539F00123083 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				093403AB284953B100123083 /* PanelView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		094437F92846672F00671E0D = {
 			isa = PBXGroup;
 			children = (
@@ -66,6 +76,7 @@
 		094438042846672F00671E0D /* QR-scanner */ = {
 			isa = PBXGroup;
 			children = (
+				093403AA2849539F00123083 /* View */,
 				09B65B482848B78900B37A80 /* Network */,
 				094438052846672F00671E0D /* AppDelegate.swift */,
 				094438072846672F00671E0D /* SceneDelegate.swift */,
@@ -223,6 +234,7 @@
 				094438062846672F00671E0D /* AppDelegate.swift in Sources */,
 				09B65B4A2848B79A00B37A80 /* NetworkService.swift in Sources */,
 				094438082846672F00671E0D /* SceneDelegate.swift in Sources */,
+				093403AC284953B100123083 /* PanelView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

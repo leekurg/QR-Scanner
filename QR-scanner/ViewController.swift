@@ -6,15 +6,38 @@
 //
 
 import UIKit
+import SnapKit
 import AVFoundation
 
 let innerDateFormat = "dd.MM.yyyy"
 
 class ViewController: UIViewController {
 
-    var video: AVCaptureVideoPreviewLayer?
-    var session: AVCaptureSession!
-    var network = NetworkService()
+    private var buttonCapture: UIButton!
+    private var video: AVCaptureVideoPreviewLayer?
+    private  var session: AVCaptureSession!
+    private var network = NetworkService()
+    
+    private var isSessionSuspended = false  //disable metadata while awaiting HTTP result
+    private var _isSessionActive = false
+    private var isSessionActive:Bool {
+        set {
+            _isSessionActive = newValue
+            if _isSessionActive {
+                isSessionSuspended = false
+                buttonCapture.setTitle("🟥", for: .normal)
+                animateButtonPressed(button: buttonCapture, toColor: .white)
+            }
+            else {
+                buttonCapture.setTitle("⚪️", for: .normal)
+                animateButtonPressed(button: buttonCapture, toColor: UIColor(red: 237/255, green: 65/255, blue: 21/255, alpha: 1))
+            }
+        }
+        get {
+            return _isSessionActive
+        }
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +45,7 @@ class ViewController: UIViewController {
         view.backgroundColor = UIColor(red: 223/255, green: 245/255, blue:  229/255, alpha: 1)
         
         setupCapture()
+        setupControlPanel()
         startCapture()
     }
 
@@ -49,10 +73,50 @@ class ViewController: UIViewController {
         
         video = AVCaptureVideoPreviewLayer(session: session)
         guard let video = video else { return }
-//        video.frame = view.layer.bounds
         video.frame = view.bounds
         video.videoGravity = .resizeAspectFill
     }
+    
+    
+    
+    private func setupControlPanel() {
+        let view = PanelView()
+        view.applyBlurEffect()
+        
+        buttonCapture = {
+            let button = UIButton()
+            
+            button.layer.cornerRadius = 50
+            button.layer.shadowOffset = CGSize(width: 0, height: 0)
+            button.layer.shadowOpacity = 0.3
+            button.layer.shadowRadius = 7.0
+            button.backgroundColor = UIColor(red: 237/255, green: 65/255, blue: 21/255, alpha: 1)
+            button.setTitle("⚪️", for: .normal)
+            
+            return button
+        }()
+
+
+        self.view.addSubview(view)
+        self.view.addSubview(buttonCapture)
+        
+        let screenH = UIScreen.main.bounds.size.height
+        view.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.height.equalTo( screenH / 4)
+        }
+        
+        buttonCapture.snp.makeConstraints { make in
+            make.center.equalTo(view)
+            make.width.height.equalTo(100)
+        }
+        
+        buttonCapture.addTarget(self, action: #selector(buttonCaptureDidTouched), for: .touchUpInside)
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {    get {       return .portrait    } }
+    
+    //MARK: - Actions
     
     private func startCapture() {
         guard let video = video else {
@@ -64,19 +128,42 @@ class ViewController: UIViewController {
             
             return
         }
-        view.layer.addSublayer(video)
+        view.layer.insertSublayer(video, below: view.layer.sublayers![0])
         session.startRunning()
     }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {    get {       return .portrait    } }
     
-    //MARK: - Actions
+    private func stopCapture() {
+        self.view.layer.sublayers?.removeFirst()
+        self.session.stopRunning()
+    }
     
     private func alertInfo(title: String, message: String?) {
         let msg = message ?? "No data"
         let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true)
+    }
+    
+    @objc func buttonCaptureDidTouched() {
+        isSessionActive = !isSessionActive
+    }
+    
+    //MARK: - Animation
+    private func animateButtonPressed( button: UIButton, toColor color: UIColor? = nil) {
+
+            button.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+
+            UIView.animate(withDuration: 1.5,
+                           delay: 0,
+                           usingSpringWithDamping: CGFloat(10.0),
+                           initialSpringVelocity: CGFloat(4.0),
+                           options: UIView.AnimationOptions.allowUserInteraction,
+                           animations: {
+                                button.transform = CGAffineTransform.identity
+                                button.backgroundColor = color
+                            },
+                           completion: { Void in()  }
+            )
     }
     
     //MARK: - Network
@@ -94,6 +181,8 @@ class ViewController: UIViewController {
     
     private func handleError( error: String ) {
         alertInfo(title: "Error", message: "❗️" + error)
+        buttonCapture.backgroundColor = UIColor(red: 150/255, green: 0, blue: 0, alpha: 1)
+        isSessionActive = false
     }
     
     private func handleSuccess(date: Date, isHoliday: Int ) {
@@ -104,6 +193,8 @@ class ViewController: UIViewController {
         let msg = dateFormatter.string(from: date) + " - is " + (isHoliday == 1 ? " holiday" : " work day")
         
         alertInfo(title: "Date", message: msg)
+        buttonCapture.backgroundColor = .green
+        isSessionActive = false
     }
     
     private func parseForDate( content: String? ) -> Date? {
@@ -131,16 +222,21 @@ class ViewController: UIViewController {
 extension ViewController: AVCaptureMetadataOutputObjectsDelegate {
     
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
+        guard isSessionActive && !isSessionSuspended else  { return }
+        
         guard metadataObjects.count > 0 else { return }
         guard let object = metadataObjects.first as? AVMetadataMachineReadableCodeObject else { return }
         guard object.type == AVMetadataObject.ObjectType.qr else { return }
         
-        var date = parseForDate(content: object.stringValue)
+        let date = parseForDate(content: object.stringValue)
         if let date = date {
+            isSessionSuspended = true
             queryDate(date: date)
         }
         else {
             alertInfo(title: "Message", message: object.stringValue)
+            buttonCapture.backgroundColor = .green
+            isSessionActive = false
         }
     }
 }
