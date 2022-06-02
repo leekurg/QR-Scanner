@@ -1,9 +1,9 @@
 # QR Scanner #
     
-**Project version as test task**    
+*Project version as test task*    
     
 ### About ###
-Swift/UIKit app for scanning QR codes
+Swift/UIKit app for scanning dates in QR codes
 
 #### Features: ####
    - Scan QR codes in real time
@@ -14,6 +14,7 @@ Swift/UIKit app for scanning QR codes
   - Swift/UIKit
   - Architecture MVC
   - Dependencies with CocoaPods
+  - Asynch HTTP requests to check a day's "holidayness"
 
 ### Installation ####
 ```sh

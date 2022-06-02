@@ -8,10 +8,13 @@
 import UIKit
 import AVFoundation
 
+let innerDateFormat = "dd.MM.yyyy"
+
 class ViewController: UIViewController {
 
     var video: AVCaptureVideoPreviewLayer?
     var session: AVCaptureSession!
+    var network = NetworkService()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +25,8 @@ class ViewController: UIViewController {
         startCapture()
     }
 
+    
+    //MARK: - Setup UI
     private func setupCapture() {
         session = AVCaptureSession()
         let device = AVCaptureDevice.default(for: .video)
@@ -61,8 +66,65 @@ class ViewController: UIViewController {
         session.startRunning()
     }
 
+    
+    //MARK: - Actions
+    
+    private func alertInfo(title: String, message: String?) {
+        let msg = message ?? "No data"
+        let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
+    //MARK: - Network
+    private func queryDate(date: Date)
+    {
+        network.fetchDate(date: date) {[weak self] (isHoliday, error) in
+            if let error = error{
+                self?.handleError(error: error)
+            }
+            else{
+                self?.handleSuccess(date: date, isHoliday: isHoliday!)  //!!!
+            }
+        }
+    }
+    
+    private func handleError( error: (String, Bool) ) {
+        alertInfo(title: "Error", message: "❗️" + error.0)
+    }
+    
+    private func handleSuccess(date: Date, isHoliday: Int ) {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = innerDateFormat
+        
+        let msg = dateFormatter.string(from: date) + " - is " + (isHoliday == 1 ? " holiday" : " work day")
+        
+        alertInfo(title: "Date", message: msg)
+    }
+    
+    private func parseForDate( content: String? ) -> Date? {
+        guard let content = content else { return nil }
+        
+        let dateFormatterGet = DateFormatter()
+
+        dateFormatterGet.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        var date = dateFormatterGet.date(from: content)
+        if date == nil {
+            dateFormatterGet.dateFormat = "yyyy-MM-dd"
+            date = dateFormatterGet.date(from: content)
+        }
+        if date == nil {
+            dateFormatterGet.dateFormat = innerDateFormat
+            date = dateFormatterGet.date(from: content)
+        }
+
+        return date
+    }
+    
 }
 
+//MARK: - QR decoding
 extension ViewController: AVCaptureMetadataOutputObjectsDelegate {
     
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
@@ -70,8 +132,12 @@ extension ViewController: AVCaptureMetadataOutputObjectsDelegate {
         guard let object = metadataObjects.first as? AVMetadataMachineReadableCodeObject else { return }
         guard object.type == AVMetadataObject.ObjectType.qr else { return }
         
-        let alert = UIAlertController(title: "QR-code recognized", message: object.stringValue, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alert, animated: true)
+        var date = parseForDate(content: object.stringValue)
+        if let date = date {
+            queryDate(date: date)
+        }
+        else {
+            alertInfo(title: "Message", message: object.stringValue)
+        }
     }
 }

@@ -13,6 +13,7 @@
 		0944380D2846672F00671E0D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0944380B2846672F00671E0D /* Main.storyboard */; };
 		0944380F2846673000671E0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0944380E2846673000671E0D /* Assets.xcassets */; };
 		094438122846673000671E0D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 094438102846673000671E0D /* LaunchScreen.storyboard */; };
+		09B65B4A2848B79A00B37A80 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B65B492848B79A00B37A80 /* NetworkService.swift */; };
 		AFC4FE2DEE55E1F6D3D8FB5D /* Pods_QR_scanner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A03AECB485D6E2C7E9FFF1C /* Pods_QR_scanner.framework */; };
 /* End PBXBuildFile section */
 
@@ -26,6 +27,7 @@
 		0944380E2846673000671E0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		094438112846673000671E0D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		094438132846673000671E0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		09B65B492848B79A00B37A80 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		6A03AECB485D6E2C7E9FFF1C /* Pods_QR_scanner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QR_scanner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6ECAF4A021F453C03E07F64A /* Pods-QR-scanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QR-scanner.debug.xcconfig"; path = "Target Support Files/Pods-QR-scanner/Pods-QR-scanner.debug.xcconfig"; sourceTree = "<group>"; };
 		A31250C2E33A64868DBA9111 /* Pods-QR-scanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QR-scanner.release.xcconfig"; path = "Target Support Files/Pods-QR-scanner/Pods-QR-scanner.release.xcconfig"; sourceTree = "<group>"; };
@@ -43,13 +45,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		092F31E32846856400C05FFD /* ICimulator */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ICimulator;
-			sourceTree = "<group>";
-		};
 		094437F92846672F00671E0D = {
 			isa = PBXGroup;
 			children = (
@@ -71,7 +66,7 @@
 		094438042846672F00671E0D /* QR-scanner */ = {
 			isa = PBXGroup;
 			children = (
-				092F31E32846856400C05FFD /* ICimulator */,
+				09B65B482848B78900B37A80 /* Network */,
 				094438052846672F00671E0D /* AppDelegate.swift */,
 				094438072846672F00671E0D /* SceneDelegate.swift */,
 				094438092846672F00671E0D /* ViewController.swift */,
@@ -81,6 +76,14 @@
 				094438132846673000671E0D /* Info.plist */,
 			);
 			path = "QR-scanner";
+			sourceTree = "<group>";
+		};
+		09B65B482848B78900B37A80 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				09B65B492848B79A00B37A80 /* NetworkService.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		8DA431C3F7D08C62FF76C6BC /* Frameworks */ = {
@@ -218,6 +221,7 @@
 			files = (
 				0944380A2846672F00671E0D /* ViewController.swift in Sources */,
 				094438062846672F00671E0D /* AppDelegate.swift in Sources */,
+				09B65B4A2848B79A00B37A80 /* NetworkService.swift in Sources */,
 				094438082846672F00671E0D /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
