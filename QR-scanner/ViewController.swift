@@ -49,7 +49,9 @@ class ViewController: UIViewController {
         
         video = AVCaptureVideoPreviewLayer(session: session)
         guard let video = video else { return }
-        video.frame = view.layer.bounds
+//        video.frame = view.layer.bounds
+        video.frame = view.bounds
+        video.videoGravity = .resizeAspectFill
     }
     
     private func startCapture() {
@@ -66,6 +68,7 @@ class ViewController: UIViewController {
         session.startRunning()
     }
 
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {    get {       return .portrait    } }
     
     //MARK: - Actions
     
@@ -89,8 +92,8 @@ class ViewController: UIViewController {
         }
     }
     
-    private func handleError( error: (String, Bool) ) {
-        alertInfo(title: "Error", message: "❗️" + error.0)
+    private func handleError( error: String ) {
+        alertInfo(title: "Error", message: "❗️" + error)
     }
     
     private func handleSuccess(date: Date, isHoliday: Int ) {

@@ -14,7 +14,7 @@ enum NetworkError : String {
 
 class NetworkService {
     
-    private func url(date: Date, params : [String:String] = [:]) -> URL{
+    private func url(date: Date) -> URL{
         var components = URLComponents()
         components.scheme = "https"
         components.host = "isdayoff.ru"
@@ -28,26 +28,22 @@ class NetworkService {
     }
 
 
-    func fetchDate( date: Date, complition: @escaping (Int?, (String, Bool)?) -> Void){
+    func fetchDate( date: Date, complition: @escaping (Int?, String?) -> Void){
         request(date: date) { (data, error) in
             if let _ = error {
-                let errorString = NetworkError.ConnectionError.rawValue
-                complition(nil, (errorString,true))
+                complition(nil, NetworkError.ConnectionError.rawValue)
                 return
             }
             if let data = data {
                 if data.count == 0 {
-                    complition(nil, (NetworkError.ServiceError.rawValue,true)); return
+                    complition(nil, NetworkError.ServiceError.rawValue); return
                 }
 
                 let sData = String.init(data: data, encoding: String.Encoding.utf8)
                 let code = Int.init(sData ?? "")
                 
-                if code == nil {
-                    complition(nil, (NetworkError.ServiceError.rawValue,true)); return
-                }
-                else if code != 0 && code != 1 {
-                    complition(nil, (NetworkError.ServiceError.rawValue,true)); return
+                if code == nil || (code != 0 && code != 1) {
+                    complition(nil, NetworkError.ServiceError.rawValue); return
                 }
                 
                 complition( code, nil )
