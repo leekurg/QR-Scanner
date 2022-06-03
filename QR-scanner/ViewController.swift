@@ -144,6 +144,18 @@ class ViewController: UIViewController {
         self.present(alert, animated: true)
     }
     
+    private func alertLink(url: URL?) {
+        guard let url = url else { return }
+        
+        let alert = UIAlertController(title: "Link", message: url.absoluteString, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Go to", style: .cancel) { action in
+            UIApplication.shared.open(url)
+            print("Open in app")
+        })
+        alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
     @objc func buttonCaptureDidTouched() {
         isSessionActive = !isSessionActive
     }
@@ -216,6 +228,22 @@ class ViewController: UIViewController {
         return date
     }
     
+    private func parseForUrl(content: String?) -> URL? {
+        guard var content = content else { return nil }
+        
+        let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+                
+        if let match = detector.firstMatch(in: content, options: [], range: NSRange(location: 0, length: content.utf16.count)) {
+            if match.range.length == content.utf16.count {
+                if !content.contains("http") {
+                    content = "https://" + content
+                }
+                return URL(string: content)
+            }
+        }
+            
+        return nil
+    }
 }
 
 //MARK: - QR decoding
@@ -232,11 +260,19 @@ extension ViewController: AVCaptureMetadataOutputObjectsDelegate {
         if let date = date {
             isSessionSuspended = true
             queryDate(date: date)
+            return
         }
-        else {
-            alertInfo(title: "Message", message: object.stringValue)
+        
+        let url = parseForUrl(content: object.stringValue)
+        if let _ = url {
+            alertLink(url: url)
             buttonCapture.backgroundColor = .green
             isSessionActive = false
+            return
         }
+        
+        alertInfo(title: "Message", message: object.stringValue)
+        buttonCapture.backgroundColor = .green
+        isSessionActive = false
     }
 }

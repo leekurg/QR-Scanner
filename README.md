@@ -1,18 +1,16 @@
 # QR Scanner #
-    
-*Project version as test task*    
-    
 _
-    <img src="https://user-images.githubusercontent.com/105886145/171636562-9a063aaa-2724-487d-93e9-54e2859b42b1.gif"> 
+    <img src="https://user-images.githubusercontent.com/105886145/171826494-204c42e7-e5c5-4a36-80fe-6e806f59dc2c.gif"> 
         
     
 ### About ###
-Swift/UIKit app for scanning dates in QR codes
+Swift/UIKit app for scanning QR codes
 
 #### Features: ####
    - Scan QR codes in real time
    - Onscreen message with decoded string
    - If string is a date, indicates if day is public holiday (Russian calendar)
+   - If string is an url, user can open it in browser
 
 #### Technology stack: ####
   - Swift/UIKit
