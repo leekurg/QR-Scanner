@@ -9,7 +9,7 @@ Swift/UIKit app for scanning QR codes
 #### Features: ####
    - Scan QR codes in real time
    - Onscreen message with decoded string
-   - If string is a date, indicates if day is public holiday (Russian calendar)
+   - If string is a date, indicates if day is public holiday (supported formats: "yyyy-MM-dd", "dd.MM.yyyy")
    - If string is an url, user can open it in browser
 
 #### Technology stack: ####
